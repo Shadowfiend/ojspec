@@ -20,7 +20,28 @@ var currentGroup;
     });
 }
 
-+ (void)for: (CPString)groupName with: (Function)groupFn
+/**
+ * Defines a group of specifications to be run. The group has a name, which may
+ * be a string or an actual class.
+ *
+ * @example
+ *  [Test for: MyClass
+ *        with: function() {
+ *          [MyClass should: "return 5 for reversing"
+ *                   by: function() {
+ *                     [[[[MyClass alloc] initialize] reverse] shouldEqual: 5]
+ *                   }];
+ *          [MyClass should: "return 4 for reversing"
+ *                   by: function() {
+ *                     [[[[MyClass alloc] initialize] reverse] shouldEqual: 4]
+ *                   }];
+ *        }]
+ *
+ * @param groupName Can be a string (as in "creating users") or a class (as in
+ *   MyClass).
+ * @param groupFn A block of code to run that will run the tests for this group.
+ */
++ (void)for: (id)groupName with: (Function)groupFn
 {
   currentGroup = groupName;
   results[currentGroup] = [];
