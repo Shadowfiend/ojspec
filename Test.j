@@ -59,9 +59,25 @@ var currentGroup;
   [self addResult: 'failure' forSpec: specDescription];
 }
 
++ addFailure: (CPString)specDescription fromException: (id)exception
+{
+  [self addResult: 'exception' forSpec: specDescription
+        withProperties: { exception: exception }]
+}
+
 + addResult: (CPString)status forSpec: (CPString)specDescription
 {
   results[currentGroup].push({ spec: specDescription, status: status });
+}
+
++ addResult: (CPString)status forSpec: (CPString)specDescription
+  withProperties: (id)properties
+{
+  var obj = { spec: specDescription, status: status };
+  for (var prop in properties)
+    obj[prop] = properties[prop];
+
+  results[currentGroup].push(obj);
 }
 
 @end

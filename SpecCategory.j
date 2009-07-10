@@ -16,9 +16,12 @@ var SpecFailedException = "specFailedException";
     specFn();
     [Test addSuccess: specDescription]
   }
-  catch (SpecFailedException)
+  catch (obj)
   {
-    [Test addFailure: specDescription]
+    if (obj == SpecFailedException)
+      [Test addFailure: specDescription]
+    else
+      [Test addFailure: specDescription fromException: obj];
   }
 }
 
@@ -29,8 +32,19 @@ var SpecFailedException = "specFailedException";
  */
 - shouldEqual: expected
 {
-  if (this != expected)
-    throw SpecFailedException();
+  if (self != expected)
+    throw SpecFailedException;
+}
+
+/**
+ * Verifies that the receivier object is not equal to the expected object. If
+ * not, records a test as a failure. Should be run within the code block of the
+ * should:by: method to work correctly.
+ */
+- shouldNotEqual: expected
+{
+  if (self == expected)
+    throw SpecFailedException;
 }
 
 @end
