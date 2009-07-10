@@ -43,7 +43,11 @@ var currentGroup;
  */
 + (void)for: (id)groupName with: (Function)groupFn
 {
-  currentGroup = groupName;
+  if (groupName.isa)
+    currentGroup = groupName.isa.name;
+  else
+    currentGroup = groupName;
+
   results[currentGroup] = [];
 
   groupFn();
