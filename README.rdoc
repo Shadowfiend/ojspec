@@ -39,9 +39,9 @@ The ojspec executable assumes that you have the objj executable installed. It
 then runs each spec and gives you a running result. The current format for these
 results is:
 
-Room
- - should allow the setting of the name: success
- - should allow the setting of the owner: failure
+ Room
+  - should allow the setting of the name: success
+  - should allow the setting of the owner: failure
 
 == Future
 
