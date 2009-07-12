@@ -10,6 +10,7 @@ var currentGroup;
 {
   results = {};
   tests = {};
+  [CPObject setCurrentPre: null andPost: null]
 }
 
 + (CPArray)runSpecsOn: (CPString)fileName whenDone: (Function)resultHandler
@@ -22,11 +23,13 @@ var currentGroup;
 
 /**
  * Defines a group of specifications to be run. The group has a name, which may
- * be a string or an actual class.
+ * be a string or an actual class, and may have functions to be run before all
+ * spec functions, before each spec function, after each spec function, or after
+ * all spec functions.
  *
  * @example
  *  [Test for: MyClass
- *        with: function() {
+ *        checking: function() {
  *          [MyClass should: "return 5 for reversing"
  *                   by: function() {
  *                     [[[[MyClass alloc] initialize] reverse] shouldEqual: 5]
@@ -37,11 +40,52 @@ var currentGroup;
  *                   }];
  *        }]
  *
+ * A more elaborate example with pre- and post-code:
+ *
+ * @example
+ *  [Test for: MyClass
+ *        beforeAll: function() { print("Starting!"); }
+ *        beforeEach: function() {
+ *          this.instance = [[MyClass alloc] init];
+ *        }
+ *        checking: function() {
+ *          [MyClass should: "return 5 for reversing"
+ *                   by: function() {
+ *                     [[this.instance reverse] shouldEqual: 5]
+ *                   }];
+ *          [MyClass should: "return 4 for reversing"
+ *                   by: function() {
+ *                     [[this.instance reverse] shouldEqual: 4]
+ *                   }];
+ *        }
+ *        afterEach: function() {
+ *          [this.instance destroy]
+ *        }
+ *        afterAll: function() { print("Done!"); }]
+ *
+ * Note that the printing use of the beforeAll: and afterAll: parameters is not
+ * a particularly good one, and indeed code that runs before or after all specs
+ * is seldom a good idea.
+ *
+ * You can omit any of the parameters to the method if you do not want to use
+ * them, as long as they are kept in order.
+ *
  * @param groupName Can be a string (as in "creating users") or a class (as in
  *   MyClass).
+ * @param allPreFn A function that runs before all specs. Assign to properties
+ *   of this if you want to use a variable defined here in the specs.
+ * @param preFn A function that runs before each spec. Assign to properties of this
+ *   if you want to use a variable defined here in the specs.
  * @param groupFn A block of code to run that will run the tests for this group.
- */
-+ (void)for: (id)groupName with: (Function)groupFn
+ * @param postFn A function that runs after each spec.
+ * @param allPostFn A function that runs after all specs.
+ *
++ (void)for: (id)groupName
+        beforeAll: (Function)allPreFn
+        beforeEach: (Function)preFn
+        checking: (Function)groupFn
+        afterEach: (Function)preFn
+        afterAll: (Function)allPostFn
 {
   if (groupName.isa)
     currentGroup = groupName.isa.name;
@@ -50,7 +94,109 @@ var currentGroup;
 
   results[currentGroup] = [];
 
-  groupFn();
+  var context = {};
+
+  if (allPreFn) allPreFn.call(context);
+  [self run: groupFn withAllPre: allPreFn andPre: preFn
+                     andPost: postFn andAllPost: allPostFn]
+  if (allPostFn) allPostFn.call(context);
+}*/
+
+/**
+ * Defines a group of specifications to be run. The group has a name, which may
+ * be a string or an actual class, and may have functions to be run before all
+ * spec functions, before each spec function, after each spec function, or after
+ * all spec functions.
+ *
+ * If the group name is an actual class, it can be followed by a description of
+ * the conditions being speced by following the for: argument with a when:
+ * argument.
+ *
+ * @example
+ *  [Test for: MyClass
+ *        checking: function() {
+ *          [MyClass should: "return 5 for reversing"
+ *                   by: function() {
+ *                     [[[[MyClass alloc] initialize] reverse] shouldEqual: 5]
+ *                   }];
+ *          [MyClass should: "return 4 for reversing"
+ *                   by: function() {
+ *                     [[[[MyClass alloc] initialize] reverse] shouldEqual: 4]
+ *                   }];
+ *        }]
+ *
+ * A more elaborate example with pre- and post-code:
+ *
+ * @example
+ *  [Test for: MyClass when: "doing magic"
+ *        beforeAll: function() { print("Starting!"); }
+ *        beforeEach: function() {
+ *          this.instance = [[MyClass alloc] init];
+ *        }
+ *        checking: function() {
+ *          [MyClass should: "return 5 for reversing"
+ *                   by: function() {
+ *                     [[this.instance reverse] shouldEqual: 5]
+ *                   }];
+ *          [MyClass should: "return 4 for reversing"
+ *                   by: function() {
+ *                     [[this.instance reverse] shouldEqual: 4]
+ *                   }];
+ *        }
+ *        afterEach: function() {
+ *          [this.instance destroy]
+ *        }
+ *        afterAll: function() { print("Done!"); }]
+ *
+ * Note that the printing use of the beforeAll: and afterAll: parameters is not
+ * a particularly good one, and indeed code that runs before or after all specs
+ * is seldom a good idea.
+ *
+ * You can omit any of the before and after parameters to the method if you do
+ * not want to use them, as long as the rest are kept in order.
+ *
+ * @param klassOrGroupName Can be a string (as in "creating users") or a class
+ *   (as in MyClass).
+ * @param groupDescription If provided, a string that extends the information
+ *   provided in the for: part of the selector. Note that this is prefixed by
+ *   `when' in the descriptions of the sepcifications.
+ * @param allPreFn A function that runs before all specs. Assign to properties
+ *   of this if you want to use a variable defined here in the specs.
+ * @param preFn A function that runs before each spec. Assign to properties of this
+ *   if you want to use a variable defined here in the specs.
+ * @param groupFn A block of code to run that will run the tests for this group.
+ * @param postFn A function that runs after each spec.
+ * @param allPostFn A function that runs after all specs.
+ */
++ (void)for: (id)klassOrGroupName when: (CPString)groupDescription
+        beforeAll: (Function)allPreFn
+        beforeEach: (Function)preFn
+        checking: (Function)groupFn
+        afterEach: (Function)postFn
+        afterAll: (Function)allPostFn
+{
+  if (klassOrGroupName.isa)
+    currentGroup = klassOrGroupName.isa.name;
+  else
+    currentGroup = klassOrGroupName;
+
+  if (groupDescription)
+    currentGroup += " when " + groupDescription;
+
+  results[currentGroup] = [];
+
+  var context = {};
+  if (allPreFn) allPreFn.call(context);
+  [self run: groupFn withPre: preFn andPost: postFn andContext: context]
+  if (allPostFn) allPostFn.call(context);
+}
+
++ (void)run: (Function)groupFn withPre: (Function)preFn andPost: (Function)postFn
+        andContext: aContext
+{
+  [CPObject setCurrentPre: preFn andPost: postFn]
+
+  groupFn.call(aContext);
 }
 
 + addSuccess: (CPString)specDescription

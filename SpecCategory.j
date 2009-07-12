@@ -1,4 +1,5 @@
 var SpecFailedException = "specFailedException";
+var currentPreFn, currentPostFn;
 
 @implementation CPObject (Specs)
 
@@ -11,9 +12,16 @@ var SpecFailedException = "specFailedException";
  */
 + should: (CPString)specDescription by: (Function)specFn
 {
+  var currentContext = {};
+  for (var prop in this)
+    currentContext[prop] = this[prop];
+
   try
   {
-    specFn();
+    if (currentPreFn) currentPreFn.call(currentContext);
+    specFn.call(currentContext);
+    if (currentPostFn) currentPostFn.call(currentContext);
+
     [Test addSuccess: specDescription]
   }
   catch (obj)
@@ -45,6 +53,56 @@ var SpecFailedException = "specFailedException";
 {
   if (self == expected)
     throw SpecFailedException;
+}
+
++ setCurrentPre: (Function)preFn andPost: (Function)postFn
+{
+  currentPreFn = preFn;
+  currentPostFn = postFn;
+}
+
++ (bool)methodSignatureForSelector: (SEL)aSelector
+{
+  var selector = CPStringFromSelector(aSelector);
+
+  if (selector.match(/^for:(when:)?(beforeAll:)?(beforeEach:)?checking:(afterEach:)?(afterAll:)?$/))
+    return true;
+}
+
++ (void)forwardInvocation: (CPInvocation)anInvocation
+{
+  var selector = CPStringFromSelector([anInvocation selector]);
+  var match =
+    selector.match(/^(for:)(when:)?(beforeAll:)?(beforeEach:)?(checking:)(afterEach:)?(afterAll:)?$/);
+
+  if (match)
+  {
+    match = match.slice(1); // drop full string match
+
+    // Construct an invocation for the full method.
+    var newArgs = []; // for passing to the full method
+    var currentInvocationArg = 2; // out of the args passed to this invocation
+    match.forEach(function(foundArg) {
+      if (foundArg)
+      {
+        newArgs.push([anInvocation argumentAtIndex: currentInvocationArg]);
+        currentInvocationArg++;
+      }
+      else
+        newArgs.push(null);
+    });
+
+    var invocation = [CPInvocation invocationWithMethodSignature: null];
+    [invocation setSelector: @selector(for:when:beforeAll:beforeEach:checking:afterEach:afterAll:)];
+    newArgs.forEach(function(arg, index) {
+      // Index is + 2 to leave space for self and _cmd.
+      [invocation setArgument: arg atIndex: index + 2]
+    });
+
+    [invocation invokeWithTarget: self]
+  }
+  else
+    [super forwardInvocation: anInvocation]
 }
 
 @end

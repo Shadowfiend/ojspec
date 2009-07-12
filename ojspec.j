@@ -12,7 +12,7 @@ args.forEach(function(file) {
               var catResults = results[category];
               print(category);
               catResults.forEach(function(result) {
-                print(" - " +result.spec + ": " + result.status);
+                print(" - should " +result.spec + ": " + result.status);
               });
             }
           }];
