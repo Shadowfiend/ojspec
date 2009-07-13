@@ -73,9 +73,8 @@ the checking: block.
 
 == Future
 
-More work to come, including color-coding for success/failure, clearer failure
-indications, and stack traces when an exception stops the system. Also planned
-is integration with the Ruby ZenTest suite's autotest tool, to continuously run
+More work to come, including alternate output formatting. Also planned is
+integration with the Ruby ZenTest suite's autotest tool, to continuously run
 specifications.
 
 == Author
