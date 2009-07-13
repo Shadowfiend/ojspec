@@ -4,13 +4,13 @@ ojspec is a sort of port of RSpec to Objective-J. For the time being, its
 purpose is to port a subset of RSpec's unit specification syntax to Objective-J
 in a way that makes sense in Objective-J. The idea here is to express tests in a
 relatively natural syntax as expectations on what should happen. These same
-tests are grouped together in an overall specification. For example, a Room
-class may need to have name and owner properties that are assignable (this being
-a fairly trivial example).
+tests are grouped together in an overall specification.
 
 == Sample
 
-A sample test for that might be:
+For example, a Room class may need to have name and owner properties that are
+assignable (this being a fairly trivial example). A sample spec for that might
+be:
 
  [Test for: Room
        with: function() {
@@ -43,12 +43,40 @@ results is:
   - should allow the setting of the name: success
   - should allow the setting of the owner: failure
 
+Specs can also include code that runs before and/or after all spec blocks and
+code that runs before and/or after each spec block. For example:
+
+ [Test for: MyClass
+       beforeAll: function() { print("Starting!"); }
+       beforeEach: function() {
+         this.instance = [[MyClass alloc] init];
+       }
+       checking: function() {
+         [MyClass should: "return 5 for reversing"
+                  by: function() {
+                    [[this.instance reverse] shouldEqual: 5]
+                  }];
+         [MyClass should: "return 4 for reversing"
+                  by: function() {
+                    [[this.instance reverse] shouldEqual: 4]
+                  }];
+       }
+       afterEach: function() {
+         [this.instance destroy]
+       }
+       afterAll: function() { print("Done!"); }]
+
+Note that the way to store state from beforeAll: and beforeEach: blocks so that
+it is accessible in the checking: and after* blocks is by setting properties on
+the this object. You then access them as properties on the this object inside
+the checking: block.
+
 == Future
 
 More work to come, including color-coding for success/failure, clearer failure
-indications, pre- and post-running code blocks, and stack traces when an
-exception stops the system. Also planned is integration with the Ruby ZenTest
-suite's autotest tool, to continuously run specifications.
+indications, and stack traces when an exception stops the system. Also planned
+is integration with the Ruby ZenTest suite's autotest tool, to continuously run
+specifications.
 
 == Author
 
