@@ -71,11 +71,22 @@ it is accessible in the checking: and after* blocks is by setting properties on
 the this object. You then access them as properties on the this object inside
 the checking: block.
 
+== Autotest
+
+ojspec now runs correctly with autotest, the Ruby-based runner that
+automatically reruns test files when they or the file they are testing are
+changed. This makes for a great tool for continuous development.
+
+autotest support is currently not the most trivial thing in the world to get
+going. You need to copy the entire distribution of ojspec into your program
+directory and move your source code to a lib/ directory and your specs to a
+spec/ directory. More work will be done on that as I familiarize myself more
+with Objective-J conventions on the filesystem.
+
 == Future
 
-More work to come, including alternate output formatting. Also planned is
-integration with the Ruby ZenTest suite's autotest tool, to continuously run
-specifications.
+More work to come, including alternate output formatting and easier autotest
+support.
 
 == Author
 
