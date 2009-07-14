@@ -83,6 +83,11 @@ directory and move your source code to a lib/ directory and your specs to a
 spec/ directory. More work will be done on that as I familiarize myself more
 with Objective-J conventions on the filesystem.
 
+Worth mentioning is that, when developing on the Mac, I highly recommend the
+autotest-fsevents and autotest-growl gems, which allow you to avoid
+polling-based triggering of the test reruns and announcements of your test
+results via Growl, respectively.
+
 == Future
 
 More work to come, including alternate output formatting and easier autotest
