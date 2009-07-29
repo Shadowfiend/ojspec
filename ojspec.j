@@ -1,6 +1,7 @@
 @import <Foundation/Foundation.j>
 @import "SpecCategory.j"
 @import "Test.j"
+@import "Mock.j"
 @import "Formatting.j"
 
 args.forEach(function(file) {
@@ -31,10 +32,10 @@ args.forEach(function(file) {
 
                   var exc = result.exception;
                   if (exc.isa)
-                    print(blue("   " + exc.name + " " + exc.reason));
+                    print(blue("   " + exc.name + ": " + exc.reason));
                   else
                   {
-                    print(blue("   " + exc.name + " - " + message));
+                    print(blue("   " + exc.name + ": " + exc.message));
                     print(exc.stack);
                   }
                   exceptions++;
