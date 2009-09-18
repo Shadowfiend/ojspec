@@ -13,7 +13,7 @@ assignable (this being a fairly trivial example). A sample spec for that might
 be:
 
  [Test for: Room
-       with: function() {
+       checking: function() {
          [Room should: "allow the setting of the name"
                by: function() {
                  var room = [[Room alloc] init];
