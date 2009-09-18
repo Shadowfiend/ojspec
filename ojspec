@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-objj ojspec.j $@
+objj `dirname "$0"`/ojspec.j $@
