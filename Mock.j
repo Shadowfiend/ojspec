@@ -16,7 +16,7 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  * to aStubList.
  *
  * @example
- *  var mock = [Mock a: CPObject as: "My object" withStubs: { hash: 'fake' }];
+ *  var mock = [Mock a:CPObject as:"My object" withStubs:{ hash: 'fake' }];
  *  [mock hash] // => "fake"
  *  [mock copy] // => Unexpected invocation of copy ...
  *
@@ -29,24 +29,24 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  *
  * @note Unexpected invocations throw an exception.
  */
-+ (Mock)a: (id)aClass as: (CPString)aMockName withStubs: (id)aStubList
++ (Mock)a:(id)aClass as:(CPString)aMockName withStubs:(id)aStubList
 {
   var baseObject = [[aClass alloc] init];
-  var mock = [self initWithBase: baseObject];
+  var mock = [self initWithBase:baseObject];
 
   var className = aClass.isa.name;
-  [mock setName: className + ": " + aMockName]
+  [mock setName:className + ": " + aMockName]
   
   if (aStubList)
   {
     for (var selector in aStubList)
-      [mock stub: sel_getUid(selector) returning: aStubList[selector]]
+      [mock stub:sel_getUid(selector) returning:aStubList[selector]]
   }
 
   return mock;
 }
 
-+ initWithBase: (id)aBaseObject
++ initWithBase:(id)aBaseObject
 {
   var mock = [[self alloc] init];
   [mock setBaseObject: aBaseObject]
@@ -61,13 +61,13 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
   return self;
 }
 
-- (void)setBaseObject: (id)aBaseObject
+- (void)setBaseObject:(id)aBaseObject
 {
   baseObject = aBaseObject;
   dtable = baseObject.isa.method_dtable;
 }
 
-- (void)setName: (CPString)aName
+- (void)setName:(CPString)aName
 {
   name = aName;
 }
@@ -93,30 +93,28 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  *   the first parameter will be the Obj-J `self' parameter, and the rest will
  *   be the parameters passed to the selector.
  */
-- expects: (SEL)aSelector
-  with: (CPArray)anArgList
-  returning: (id)aReturnProducer
+- expects:(SEL)aSelector with:(CPArray)anArgList returning:(id)aReturnProducer
 {
   expectations[aSelector] = { args: anArgList,
                               returnProducer: aReturnProducer };
 }
 
-- stub: (SEL)aSelector returning: (id)aReturnProducer
+- stub:(SEL)aSelector returning:(id)aReturnProducer
 {
   expectations[aSelector] = { returnProducer: aReturnProducer };
 }
 
-- stub: (SEL)aSelector
+- stub:(SEL)aSelector
 {
-  [self stub: aSelector returning: null]
+  [self stub:aSelector returning:null]
 }
 
-- (bool)methodSignatureForSelector: (SEL)aSelector
+- (bool)methodSignatureForSelector:(SEL)aSelector
 {
   return dtable[aSelector];
 }
 
-- (void)forwardInvocation: (CPInvocation)anInvocation
+- (void)forwardInvocation:(CPInvocation)anInvocation
 {
   var selector = [anInvocation selector];
   var strSelector = CPStringFromSelector(selector);
@@ -130,14 +128,14 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
 
   var args = [];
   for (var i = 0; i < numArgs; ++i)
-    args.push([anInvocation argumentAtIndex: i + 2]);
+    args.push([anInvocation argumentAtIndex:i + 2]);
 
   var unexpected = "Unexpected invocation of " + strSelector +
       " with [" + args.join(', ') + "]" +
       " on mock object " + name;
 
   if (! expectation)
-    [CPException raise: UnexpectedInvocationException reason: unexpected]
+    [CPException raise:UnexpectedInvocationException reason:unexpected]
   else
   {
     var argsEqual = false;
@@ -159,10 +157,10 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
       else
         retVal = expectation.returnProducer;
 
-      [anInvocation setReturnValue: retVal]
+      [anInvocation setReturnValue:retVal]
     }
     else
-      [CPException raise: UnexpectedInvocationException reason: unexpected]
+      [CPException raise:UnexpectedInvocationException reason:unexpected]
   }
 }
 

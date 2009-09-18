@@ -7,8 +7,8 @@
 args.forEach(function(file) {
   [Test resetSpecs];
   var results =
-    [Test runSpecsOn: file
-          whenDone: function(results) {
+    [Test runSpecsOn:file
+          whenDone:function(results) {
             var total = 0;
             var failures = 0;
             var exceptions = 0;

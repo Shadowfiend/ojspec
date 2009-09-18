@@ -10,7 +10,7 @@ var currentPreFn, currentPostFn;
  * @param by A block of code to run for this spec. It should make calls to the
  *   shouldEqual: or shouldNotEqual: methods.
  */
-+ should: (CPString)specDescription by: (Function)specFn
++ should:(CPString)specDescription by:(Function)specFn
 {
   var currentContext = {};
   for (var prop in this)
@@ -22,14 +22,14 @@ var currentPreFn, currentPostFn;
     specFn.call(currentContext);
     if (currentPostFn) currentPostFn.call(currentContext);
 
-    [Test addSuccess: specDescription]
+    [Test addSuccess:specDescription]
   }
   catch (obj)
   {
     if (obj == SpecFailedException)
-      [Test addFailure: specDescription]
+      [Test addFailure:specDescription]
     else
-      [Test addFailure: specDescription fromException: obj];
+      [Test addFailure:specDescription fromException:obj];
   }
 }
 
@@ -38,7 +38,7 @@ var currentPreFn, currentPostFn;
  * records a test as a failure. Should be run within the code block of the
  * should:by: method to work correctly.
  */
-- shouldEqual: expected
+- shouldEqual:expected
 {
   if (self != expected)
     throw SpecFailedException;
@@ -49,13 +49,13 @@ var currentPreFn, currentPostFn;
  * not, records a test as a failure. Should be run within the code block of the
  * should:by: method to work correctly.
  */
-- shouldNotEqual: expected
+- shouldNotEqual:expected
 {
   if (self == expected)
     throw SpecFailedException;
 }
 
-+ setCurrentPre: (Function)preFn andPost: (Function)postFn
++ setCurrentPre:(Function)preFn andPost:(Function)postFn
 {
   currentPreFn = preFn;
   currentPostFn = postFn;
