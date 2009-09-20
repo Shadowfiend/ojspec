@@ -4,10 +4,13 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
 
 @implementation Mock : BlankSlate
 {
-  CPString name;
-  CPArray expectations;
-  id baseObject;
-  id dtable;
+    CPString name;
+    CPArray expectations;
+
+    id baseObject;
+    id baseClass;
+
+    id dtable;
 }
 
 /**
@@ -31,50 +34,59 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  */
 + (Mock)a:(id)aClass as:(CPString)aMockName withStubs:(id)aStubList
 {
-  var baseObject = [[aClass alloc] init];
-  var mock = [self initWithBase:baseObject];
+    var mock = [[self alloc] initForClass:aClass];
 
-  var className = aClass.isa.name;
-  [mock setName:className + ": " + aMockName]
+    var className = aClass.isa.name;
+    [mock setName:className + ": " + aMockName]
   
-  if (aStubList)
-  {
-    for (var selector in aStubList)
-      [mock stub:sel_getUid(selector) returning:aStubList[selector]]
-  }
+    if (aStubList)
+    {
+        for (var selector in aStubList)
+            [mock stub:sel_getUid(selector) returning:aStubList[selector]]
+    }
 
-  return mock;
+    return mock;
 }
 
 + initWithBase:(id)aBaseObject
 {
-  var mock = [[self alloc] init];
-  [mock setBaseObject: aBaseObject]
+    var mock = [[self alloc] init];
+    [mock setBaseObject: aBaseObject]
 
-  return mock;
+    return mock;
 }
 
-- init
+- (Mock)init
 {
-  expectations = [];
+    [super init]
 
-  return self;
+    expectations = [];
+
+    return self;
+}
+
+- (Mock)initForClass:(id)aClass
+{
+    [self init]
+
+    baseClass = aClass;
+    dtable = baseClass.method_dtable;
 }
 
 - (void)setBaseObject:(id)aBaseObject
 {
-  baseObject = aBaseObject;
-  dtable = baseObject.isa.method_dtable;
+    baseObject = aBaseObject;
+    dtable = baseObject.isa.method_dtable;
 }
 
 - (void)setName:(CPString)aName
 {
-  name = aName;
+    name = aName;
 }
 
 - (CPString)name
 {
-  return name;
+    return name;
 }
 
 /**
@@ -95,73 +107,73 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  */
 - expects:(SEL)aSelector with:(CPArray)anArgList returning:(id)aReturnProducer
 {
-  expectations[aSelector] = { args: anArgList,
-                              returnProducer: aReturnProducer };
+    expectations[aSelector] = { args: anArgList,
+                                returnProducer: aReturnProducer };
 }
 
 - stub:(SEL)aSelector returning:(id)aReturnProducer
 {
-  expectations[aSelector] = { returnProducer: aReturnProducer };
+    expectations[aSelector] = { returnProducer: aReturnProducer };
 }
 
 - stub:(SEL)aSelector
 {
-  [self stub:aSelector returning:null]
+    [self stub:aSelector returning:null]
 }
 
 - (bool)methodSignatureForSelector:(SEL)aSelector
 {
-  return dtable[aSelector];
+    return dtable[aSelector];
 }
 
 - (void)forwardInvocation:(CPInvocation)anInvocation
 {
-  var selector = [anInvocation selector];
-  var strSelector = CPStringFromSelector(selector);
-  var numArgs = strSelector.split(':').length - 1;
-  var expectation = expectations[selector];
+    var selector = [anInvocation selector];
+    var strSelector = CPStringFromSelector(selector);
+    var numArgs = strSelector.split(':').length - 1;
+    var expectation = expectations[selector];
 
-  // Make sure we actually got a real expectation, not an instance method on
-  // the array.
-  if (! expectation.returnProducer)
-    expectation = null ;
+    // Make sure we actually got a real expectation, not an instance method on
+    // the array.
+    if (! expectation.returnProducer)
+        expectation = null ;
 
-  var args = [];
-  for (var i = 0; i < numArgs; ++i)
-    args.push([anInvocation argumentAtIndex:i + 2]);
+    var args = [];
+    for (var i = 0; i < numArgs; ++i)
+        args.push([anInvocation argumentAtIndex:i + 2]);
 
-  var unexpected = "Unexpected invocation of " + strSelector +
-      " with [" + args.join(', ') + "]" +
-      " on mock object " + name;
+    var unexpected = "Unexpected invocation of " + strSelector +
+        " with [" + args.join(', ') + "]" +
+        " on mock object " + name;
 
-  if (! expectation)
-    [CPException raise:UnexpectedInvocationException reason:unexpected]
-  else
-  {
-    var argsEqual = false;
-    
-    if (! expectation.args)
-      argsEqual = true;
-    else if (args.length == expectation.args.length)
-      argsEqual = args.every(function(arg, i) { return arg == expectation.args[i]; });
-
-    if (argsEqual)
-    {
-      var retVal;
-
-      if (expectation.returnProducer instanceof Function)
-      {
-        args.unshift(self);
-        retVal = expectation.returnProducer.apply(this, args);
-      }
-      else
-        retVal = expectation.returnProducer;
-
-      [anInvocation setReturnValue:retVal]
-    }
+    if (! expectation)
+        [CPException raise:UnexpectedInvocationException reason:unexpected]
     else
-      [CPException raise:UnexpectedInvocationException reason:unexpected]
-  }
+    {
+        var argsEqual = false;
+    
+        if (! expectation.args)
+            argsEqual = true;
+        else if (args.length == expectation.args.length)
+            argsEqual = args.every(function(arg, i) { return arg == expectation.args[i]; });
+
+        if (argsEqual)
+        {
+            var retVal;
+
+            if (expectation.returnProducer instanceof Function)
+            {
+                args.unshift(self);
+                retVal = expectation.returnProducer.apply(this, args);
+            }
+            else
+                retVal = expectation.returnProducer;
+
+            [anInvocation setReturnValue:retVal]
+        }
+        else
+            [CPException raise:UnexpectedInvocationException reason:unexpected]
+    }
 }
 
 @end
