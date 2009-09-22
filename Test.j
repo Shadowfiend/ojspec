@@ -194,4 +194,5 @@ var currentGroup;
   else
     [super forwardInvocation:anInvocation]
 }
+
 @end

@@ -12,25 +12,31 @@ var currentPreFn, currentPostFn;
  */
 + should:(CPString)specDescription by:(Function)specFn
 {
-  var currentContext = {};
-  for (var prop in this)
-    currentContext[prop] = this[prop];
+    var currentContext = {};
+    for (var prop in this)
+        currentContext[prop] = this[prop];
 
-  try
-  {
-    if (currentPreFn) currentPreFn.call(currentContext);
-    specFn.call(currentContext);
-    if (currentPostFn) currentPostFn.call(currentContext);
+    try
+    {
+        [Mock resetMockTracking]
 
-    [Test addSuccess:specDescription]
-  }
-  catch (obj)
-  {
-    if (obj == SpecFailedException)
-      [Test addFailure:specDescription]
-    else
-      [Test addFailure:specDescription fromException:obj];
-  }
+        if (currentPreFn) currentPreFn.call(currentContext);
+        specFn.call(currentContext);
+        if (currentPostFn) currentPostFn.call(currentContext);
+
+        [Mock freezeMockTracking]
+
+        [self ensureMockExpectationsWereMet]
+
+        [Test addSuccess:specDescription]
+    }
+    catch (obj)
+    {
+          if (obj == SpecFailedException)
+              [Test addFailure:specDescription]
+          else
+              [Test addFailure:specDescription fromException:obj];
+    }
 }
 
 /**
@@ -40,8 +46,8 @@ var currentPreFn, currentPostFn;
  */
 - shouldEqual:expected
 {
-  if (self != expected)
-    throw SpecFailedException;
+    if (self != expected)
+        throw SpecFailedException;
 }
 
 /**
@@ -51,14 +57,23 @@ var currentPreFn, currentPostFn;
  */
 - shouldNotEqual:expected
 {
-  if (self == expected)
-    throw SpecFailedException;
+    if (self == expected)
+        throw SpecFailedException;
 }
 
 + setCurrentPre:(Function)preFn andPost:(Function)postFn
 {
-  currentPreFn = preFn;
-  currentPostFn = postFn;
+    currentPreFn = preFn;
+    currentPostFn = postFn;
+}
+
+/**
+ * Throws an exception if the expectations of any mocks set up in the beforeEach
+ * block are not met.
+ */
++ (void)ensureMockExpectationsWereMet
+{
+    [Mock ensureTrackedExpectationsWereMet]
 }
 
 @end

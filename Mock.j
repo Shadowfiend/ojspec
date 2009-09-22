@@ -1,6 +1,10 @@
 @import "Frameworks/BlankSlate/BlankSlate.j"
 
-var UnexpectedInvocationException = "UnexpectedInvocationException";
+var UnexpectedInvocationException = "UnexpectedInvocationException",
+    UnmetExpectationException = "UnmetExpectationException";
+
+var mockList = [],
+    trackMocks = true;
 
 @implementation Mock : BlankSlate
 {
@@ -48,17 +52,64 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
     return mock;
 }
 
-+ initWithBase:(id)aBaseObject
-{
-    var mock = [[self alloc] init];
-    [mock setBaseObject: aBaseObject]
 
-    return mock;
++ (void)resetMockTracking
+{
+    mockList = [];
+    trackMocks = true;
 }
+
+
++ (void)freezeMockTracking
+{
+    trackMocks = false;
+}
+
+
++ (void)ensureTrackedExpectationsWereMet
+{
+    mockList.forEach(
+        function(mock)
+        {
+            var unmetExpectation = [mock firstUnmetExpectation];
+            if (unmetExpectation)
+            {
+                /*CPStringForSelector(unmetExpectation.selector)*/
+                var selector = unmetExpectation.selector,
+                    errorMessage = "Mock <" + [mock name] + "> was expecting ";
+
+                if (unmetExpectation.args && unmetExpectation.args.length > 0)
+                {
+                    var message = "",
+                        selectorParts = selector.split(":"),
+                        args = unmetExpectation.args;
+
+                    // Drop the last, blank item.
+                    delete selectorParts[selectorParts.length - 1];
+                    selectorParts.forEach(
+                        function(paramName, i)
+                        {
+                            message += paramName + ":" + args[i] + " ";
+                        });
+
+                    errorMessage += message;
+                }
+                else
+                    errorMessage += selector + " ";
+
+                errorMessage += "but did not receive it.";
+
+                [CPException raise:UnmetExpectationException
+                            reason:errorMessage]
+            }
+        });
+}
+
 
 - (Mock)init
 {
-    [super init]
+    if (trackMocks)
+        mockList.push(self);
 
     expectations = [];
 
@@ -71,6 +122,8 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
 
     baseClass = aClass;
     dtable = baseClass.method_dtable;
+
+    return self;
 }
 
 - (void)setBaseObject:(id)aBaseObject
@@ -87,6 +140,21 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
 - (CPString)name
 {
     return name;
+}
+
+- (id)firstUnmetExpectation
+{
+    var expectation;
+    for (var selector in expectations)
+    {
+        expectation = expectations[selector];
+        if (! expectations[selector].selector)
+            continue;
+        else if (! expectation.called)
+            return expectation;
+    }
+
+    return nil;
 }
 
 /**
@@ -107,13 +175,16 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
  */
 - expects:(SEL)aSelector with:(CPArray)anArgList returning:(id)aReturnProducer
 {
-    expectations[aSelector] = { args: anArgList,
+    expectations[aSelector] = { selector: aSelector,
+                                args: anArgList,
                                 returnProducer: aReturnProducer };
 }
 
 - stub:(SEL)aSelector returning:(id)aReturnProducer
 {
-    expectations[aSelector] = { returnProducer: aReturnProducer };
+    expectations[aSelector] = { selector: aSelector,
+                                returnProducer: aReturnProducer,
+                                called: true };
 }
 
 - stub:(SEL)aSelector
@@ -161,6 +232,7 @@ var UnexpectedInvocationException = "UnexpectedInvocationException";
         {
             var retVal;
 
+            expectation.called = true;
             if (expectation.returnProducer instanceof Function)
             {
                 args.unshift(self);
