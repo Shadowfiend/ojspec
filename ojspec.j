@@ -1,5 +1,5 @@
 @import <Foundation/Foundation.j>
-@import "SpecCategory.j"
+@import "CPObject+Specs.j"
 @import "Test.j"
 @import "Mock.j"
 @import "Formatting.j"
