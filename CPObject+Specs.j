@@ -45,6 +45,11 @@ var currentPreFn, currentPostFn;
     }
 }
 
++ should:(CPString)specDescription
+{
+    [Test addResult:@"pending" forSpec:specDescription];
+}
+
 /**
  * Verifies that the receivier object matches the expected object. If it,
  * doesn't match it records the test as a failure. Should be run within 
