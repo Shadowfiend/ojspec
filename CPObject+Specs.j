@@ -1,8 +1,10 @@
 
 @import "OJMatcher.j"
 
-@import "Matchers/OJEqual.j"
+@import "Matchers/OJBeInstanceOf.j"
+@import "Matchers/OJBeNil.j"
 @import "Matchers/OJEql.j"
+@import "Matchers/OJEqual.j"
 
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;
