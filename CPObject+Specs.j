@@ -45,7 +45,7 @@ var currentPreFn, currentPostFn;
     }
 }
 
-+ should:(CPString)specDescription
++ (void)should:(CPString)specDescription
 {
     [Test addResult:@"pending" forSpec:specDescription];
 }

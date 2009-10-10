@@ -12,10 +12,10 @@ args.forEach(function(file) {
     var results =
         [Test runSpecsOn:file
                 whenDone:function(results) {
-                            var total = 0;
-                            var pending = 0;
-                            var failures = 0;
-                            var exceptions = 0;
+                            var total = 0,
+                                pending = 0,
+                                failures = 0,
+                                exceptions = 0;
                             
                             for (var category in results)
                             {
@@ -59,10 +59,10 @@ args.forEach(function(file) {
                                     }
                                 });
                                 
-                                var errs = failures + exceptions;
-                                var output = total;
-                                output += " example" + (total > 1 ? "s, " : ", ");
-                                output += errs + " failure" + (errs > 1 ? "s" : '');
+                                var output = "";
+                                
+                                output += total + " example" + (total > 1 ? "s, " : ", ");
+                                output += (failures + exceptions) + " failure" + (failures + exceptions > 1 ? "s" : '');
                                 
                                 if(pending > 0)
                                 {
