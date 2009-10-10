@@ -1,3 +1,9 @@
+
+@import "OJSMatcher.j"
+
+@import "Matchers/OJSEqual.j"
+@import "Matchers/OJSEql.j"
+
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;
 
@@ -40,24 +46,24 @@ var currentPreFn, currentPostFn;
 }
 
 /**
- * Verifies that the receivier object is equal to the expected object. If not,
- * records a test as a failure. Should be run within the code block of the
- * should:by: method to work correctly.
+ * Verifies that the receivier object matches the expected object. If it,
+ * doesn't match it records the test as a failure. Should be run within 
+ * the code block of the should:by: method to work correctly.
  */
-- shouldEqual:expected
+- (void)should:(id)expected
 {
-    if (self != expected)
+    if(![expected matches:self])
         throw SpecFailedException;
 }
 
 /**
- * Verifies that the receivier object is not equal to the expected object. If
- * not, records a test as a failure. Should be run within the code block of the
- * should:by: method to work correctly.
+ * Verifies that the receivier object doesn’t match the expected object. If it 
+ * does match it records the test as a failure. Should be run within the code 
+ * block of the should:by: method to work correctly.
  */
-- shouldNotEqual:expected
+- (void)shouldNot(id)expected
 {
-    if (self == expected)
+    if([expected matches:self])
         throw SpecFailedException;
 }
 
