@@ -2,7 +2,7 @@
 @import "../OJMatcher.j"
 
 /**
- * Checks if two objects has the same value.
+ * Checks if an objects is nil.
  */
 @implementation OJBeNil : OJMatcher
 {
@@ -16,12 +16,6 @@
     }
     
     return self;
-}
-
-- (BOOL)matches:(id)actual
-{
-    [self setActual:actual];
-    return ([self expected] == [self actual]);
 }
 
 @end

@@ -15,6 +15,12 @@
     return self;
 }
 
+- (BOOL)matches:(id)actual
+{
+    [self setActual:actual];
+    return ([self expected] == [self actual]);
+}
+
 - (CPString)failureMessageForShould
 {
     return @"expected " + [self expected] + " but was " + [self actual];

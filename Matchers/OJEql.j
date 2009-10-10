@@ -8,12 +8,6 @@
 {
 }
 
-- (BOOL)matches:(id)actual
-{
-    [self setActual:actual];
-    return ([self expected] == [self actual]);
-}
-
 @end
 
 function eql(expected)
