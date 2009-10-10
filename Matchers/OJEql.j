@@ -1,10 +1,10 @@
 
-@import "../OJSMatcher.j"
+@import "../OJMatcher.j"
 
 /**
  * Checks if two objects has the same value.
  */
-@implementation OJSEql : OJSMatcher
+@implementation OJEql : OJMatcher
 {
 }
 
@@ -18,5 +18,5 @@
 
 function eql(expected)
 {
-    return [[OJSEql alloc] initWithExpected:expected];
+    return [[OJEql alloc] initWithExpected:expected];
 }

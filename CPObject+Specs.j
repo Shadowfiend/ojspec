@@ -1,8 +1,8 @@
 
-@import "OJSMatcher.j"
+@import "OJMatcher.j"
 
-@import "Matchers/OJSEqual.j"
-@import "Matchers/OJSEql.j"
+@import "Matchers/OJEqual.j"
+@import "Matchers/OJEql.j"
 
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;

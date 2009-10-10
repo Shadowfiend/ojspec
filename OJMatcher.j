@@ -1,5 +1,5 @@
 
-@implementation OJSMatcher : CPObject
+@implementation OJMatcher : CPObject
 {
     id _expected @accessors(property=expected);
     id _actual @accessors(property=actual);

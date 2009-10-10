@@ -1,10 +1,10 @@
 
-@import "../OJSMatcher.j"
+@import "../OJMatcher.j"
 
 /**
  * Checks if two objects are the same (has the same identity).
  */
-@implementation OJSEqual : OJSMatcher
+@implementation OJEqual : OJMatcher
 {
 }
 
@@ -18,5 +18,5 @@
 
 function equal(expected)
 {
-    return [[OJSEqual alloc] initWithExpected:expected];
+    return [[OJEqual alloc] initWithExpected:expected];
 }
