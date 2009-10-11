@@ -26,7 +26,7 @@
     return @"expected " + [self expected] + " but was " + [self actual];
 }
 
-- (CPString)failureMessageCorShouldNot
+- (CPString)failureMessageForShouldNot
 {
     return @"expected " + [self expected] + " but was " + [self actual];
 }
