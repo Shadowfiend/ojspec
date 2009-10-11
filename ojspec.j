@@ -12,18 +12,29 @@ args.forEach(function(file) {
     var results =
         [Test runSpecsOn:file
                 whenDone:function(results) {
-                            var total = 0,
-                                pending = 0,
-                                failures = 0,
-                                exceptions = 0;
+                            /*
+                                @todo
+                                Some really ugly var names but it works. Should rename these whenever I
+                                think of any name that fits better.
+                             */
+                            var totalExamples = 0,
+                                totalPending = 0,
+                                totalFailures = 0,
+                                totalExceptions;
                             
                             for (var category in results)
                             {
+                                var categoryExamples = 0,
+                                    categoryPending = 0,
+                                    categoryFailures = 0,
+                                    categoryExceptions = 0;
+                                
                                 var catResults = results[category];
                                 print("\n" + category);
                                 
                                 catResults.forEach(function(result) {
-                                    total++
+                                    totalExamples++;
+                                    categoryExamples++;
                                     
                                     if (result.status == "success")
                                     {
@@ -32,12 +43,16 @@ args.forEach(function(file) {
                                     else if (result.status == "pending")
                                     {
                                         print(yellow(" - should " + result.spec + " - PENDING"));
-                                        pending++;
+                                        
+                                        totalPending++;
+                                        categoryPending++;
                                     }
                                     else if (result.status == "failure")
                                     {
                                         print(red(" - should " + result.spec + " - FAILURE"));
-                                        failures++;
+                                        
+                                        totalFailures++;
+                                        categoryFailures++;
                                     }
                                     else if (result.status == "exception")
                                     {
@@ -55,28 +70,29 @@ args.forEach(function(file) {
                                             print(exc.stack);
                                         }
                                         
-                                        exceptions++;
+                                        totalExceptions++;
+                                        categoryExceptions++;
                                     }
                                 });
                                 
                                 var output = "";
                                 
-                                output += total + " example" + (total > 1 ? "s, " : ", ");
-                                output += (failures + exceptions) + " failure" + (failures + exceptions > 1 ? "s" : '');
+                                output += categoryExamples + " example" + (categoryExamples > 1 ? "s, " : ", ");
+                                output += (categoryFailures + categoryExceptions) + " failure" + (categoryFailures + categoryExceptions > 1 ? "s" : '');
                                 
-                                if(pending > 0)
+                                if(categoryPending > 0)
                                 {
-                                    output += ", " + pending + " pending";
+                                    output += ", " + categoryPending + " pending";
                                 }
                                 
-                                if (exceptions == 1)
-                                    output += ", " + exceptions + " due to an exception.";
-                                else if (exceptions > 0)
-                                    output += ", " + exceptions + " due to exceptions.";
+                                if (categoryExceptions == 1)
+                                    output += ", " + categoryExceptions + " due to an exception.";
+                                else if (categoryExceptions > 0)
+                                    output += ", " + categoryExceptions + " due to exceptions.";
                                 else
                                     output += ".";
                                 
-                                if (failures + exceptions > 0)
+                                if (categoryFailures + categoryExceptions > 0)
                                     output = red(output);
                                 else
                                     output = green(output);
