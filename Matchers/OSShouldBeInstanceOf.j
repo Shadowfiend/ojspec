@@ -8,7 +8,7 @@
 
 - (BOOL)matches:(id)actual
 {
-    return [super matches:[[self actual] class]];
+    return [super matches:[actual class]];
 }
 
 @end
