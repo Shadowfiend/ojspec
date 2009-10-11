@@ -24,7 +24,7 @@ class Autotest::Ojspec < Autotest
   end
 
   def ojspec
-    "objj ojspec.j"
+    "ojspec"
   end
   
   def consolidate_failures(failed)

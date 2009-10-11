@@ -78,10 +78,12 @@ automatically reruns test files when they or the file they are testing are
 changed. This makes for a great tool for continuous development.
 
 autotest support is currently not the most trivial thing in the world to get
-going. You need to copy the entire distribution of ojspec into your program
-directory and move your source code to a lib/ directory and your specs to a
-spec/ directory. More work will be done on that as I familiarize myself more
-with Objective-J conventions on the filesystem.
+going. You need to copy the autotest directory from the ojspec distribution
+into your program directory and move your source code to a lib/ directory and
+your specs to a spec/ directory. More work will be done on that as I
+familiarize myself more with Objective-J conventions on the filesystem. Also,
+you need to make sure to have your ojspec directory in your PATH so autotest
+can find it.
 
 Worth mentioning is that, when developing on the Mac, I highly recommend the
 autotest-fsevents and autotest-growl gems, which allow you to avoid
