@@ -1,3 +1,11 @@
+
+@import "OSMatcher.j"
+
+@import "Matchers/OSShouldBeInstanceOf.j"
+@import "Matchers/OSShouldBeNil.j"
+@import "Matchers/OSShouldBeSameAs.j"
+@import "Matchers/OSShouldEqual.j"
+
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;
 
@@ -39,26 +47,9 @@ var currentPreFn, currentPostFn;
     }
 }
 
-/**
- * Verifies that the receivier object is equal to the expected object. If not,
- * records a test as a failure. Should be run within the code block of the
- * should:by: method to work correctly.
- */
-- shouldEqual:expected
++ (void)should:(CPString)specDescription
 {
-    if (self != expected)
-        throw SpecFailedException;
-}
-
-/**
- * Verifies that the receivier object is not equal to the expected object. If
- * not, records a test as a failure. Should be run within the code block of the
- * should:by: method to work correctly.
- */
-- shouldNotEqual:expected
-{
-    if (self == expected)
-        throw SpecFailedException;
+    [Test addResult:@"pending" forSpec:specDescription];
 }
 
 + setCurrentPre:(Function)preFn andPost:(Function)postFn

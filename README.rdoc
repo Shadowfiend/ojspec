@@ -14,20 +14,23 @@ be:
 
  [Test for: Room
        checking: function() {
+
          [Room should: "allow the setting of the name"
                by: function() {
                  var room = [[Room alloc] init];
                  [room setName: "hi"]
 
-                 [[room name] shouldEqual: "hi"]
+                 [[room name] should: eql("hi")]
                }]
+
          [Room should: "allow the setting of the owner"
                by: function() {
                  var room = [[Room alloc] init];
                  [room setOwner: "john"];
 
-                 [[room owner] shouldEqual: "john"]
+                 [[room owner] should: eql("john")]
                }]
+
        }]
 
 Once we have that test set up and saved in a RoomSpec.j file, we can run it with
@@ -54,11 +57,11 @@ code that runs before and/or after each spec block. For example:
        checking: function() {
          [MyClass should: "return 5 for reversing"
                   by: function() {
-                    [[this.instance reverse] shouldEqual: 5]
+                    [[this.instance reverse] should:eql(5)]
                   }];
          [MyClass should: "return 4 for reversing"
                   by: function() {
-                    [[this.instance reverse] shouldEqual: 4]
+                    [[this.instance reverse] should:eql(4)]
                   }];
        }
        afterEach: function() {

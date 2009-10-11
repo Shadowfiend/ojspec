@@ -1,6 +1,7 @@
-var results;
-var tests;
-var currentGroup;
+
+var results,
+    tests,
+    currentGroup;
 
 @implementation Test :CPObject
 {
