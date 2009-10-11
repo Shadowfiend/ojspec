@@ -1,10 +1,10 @@
 
 @import "OJMatcher.j"
 
-@import "Matchers/OJBeInstanceOf.j"
-@import "Matchers/OJBeNil.j"
-@import "Matchers/OJEql.j"
-@import "Matchers/OJEqual.j"
+@import "Matchers/OJShouldBeInstanceOf.j"
+@import "Matchers/OJShouldBeNil.j"
+@import "Matchers/OJShouldBeSameAs.j"
+@import "Matchers/OJShouldEqual.j"
 
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;
@@ -50,28 +50,6 @@ var currentPreFn, currentPostFn;
 + (void)should:(CPString)specDescription
 {
     [Test addResult:@"pending" forSpec:specDescription];
-}
-
-/**
- * Verifies that the receivier object matches the expected object. If it,
- * doesn't match it records the test as a failure. Should be run within 
- * the code block of the should:by: method to work correctly.
- */
-- (void)should:(id)expected
-{
-    if(![expected matches:self])
-        throw SpecFailedException;
-}
-
-/**
- * Verifies that the receivier object doesn’t match the expected object. If it 
- * does match it records the test as a failure. Should be run within the code 
- * block of the should:by: method to work correctly.
- */
-- (void)shouldNot(id)expected
-{
-    if([expected matches:self])
-        throw SpecFailedException;
 }
 
 + setCurrentPre:(Function)preFn andPost:(Function)postFn
