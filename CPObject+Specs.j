@@ -1,10 +1,10 @@
 
-@import "OJMatcher.j"
+@import "OSMatcher.j"
 
-@import "Matchers/OJShouldBeInstanceOf.j"
-@import "Matchers/OJShouldBeNil.j"
-@import "Matchers/OJShouldBeSameAs.j"
-@import "Matchers/OJShouldEqual.j"
+@import "Matchers/OSShouldBeInstanceOf.j"
+@import "Matchers/OSShouldBeNil.j"
+@import "Matchers/OSShouldBeSameAs.j"
+@import "Matchers/OSShouldEqual.j"
 
 var SpecFailedException = "specFailedException";
 var currentPreFn, currentPostFn;

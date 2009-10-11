@@ -1,8 +1,8 @@
 
-@import "../OJMatcher.j"
+@import "../OSMatcher.j"
 
 
-@implementation OJShouldEqual : OJMatcher
+@implementation OSShouldEqual : OSMatcher
 {
 }
 
@@ -15,13 +15,13 @@
 
 - (void)shouldEqual:(id)expected
 {
-    if(![[[OJShouldEqual alloc] initWithExpected:expected] matches:self])
+    if(![[[OSShouldEqual alloc] initWithExpected:expected] matches:self])
         throw SpecFailedException;
 }
 
 - (void)shouldNotEqual:(id)expected
 {
-    if([[[OJShouldEqual alloc] initWithExpected:expected] matches:self])
+    if([[[OSShouldEqual alloc] initWithExpected:expected] matches:self])
         throw SpecFailedException;
 }
 
