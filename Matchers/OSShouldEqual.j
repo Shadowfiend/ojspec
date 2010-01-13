@@ -1,7 +1,6 @@
 
 @import "../OSMatcher.j"
 
-
 @implementation OSShouldEqual : OSMatcher
 {
 }
@@ -10,7 +9,7 @@
 
 /**
  * Checks if two objects has the same value.
- */
+ *
 @implementation CPObject (ShouldEqualMatcher)
 
 - (void)shouldEqual:(id)expected
@@ -25,4 +24,6 @@
         throw SpecFailedException;
 }
 
-@end
+@end*/
+
+[CPObject registerMatcher:OSShouldEqual];

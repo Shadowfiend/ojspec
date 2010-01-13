@@ -7,18 +7,17 @@
 
 - (id)initWithExpected:(id)expected
 {
-    if(self = [super init])
-    {
+    if (self = [super init])
         _expected = expected;
-    }
     
     return self;
 }
 
-- (BOOL)matches:(id)actual
+- (void)matches:(id)actual
 {
     [self setActual:actual];
-    return ([self expected] == [self actual]);
+
+    return [self expected] == [self actual];
 }
 
 - (CPString)failureMessageForShould
